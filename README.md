@@ -21,22 +21,6 @@ Non-Preemptive Priority (Kesintisiz Öncelik)
 
 Preemptive Priority (Kesintili Öncelik)
 
-📂 Mimari ve Modüler Yapı
-Proje, temizlik, sürdürülebilirlik ve yeni algoritmaların kolay entegrasyonu için katmanlı ve modüler bir mimari ile tasarlanmıştır:
-
-src/
-├── model/         # Veri Yapıları: Tüm simülasyon verilerinin temelini oluşturur.
-│    ├── Process.java     # İşlemci süreçlerini temsil eden ana veri yapısı.
-│    └── Result.java      # Süreç bazlı sonuçları ve metrikleri tutar.
-│
-├── scheduler/     # Algoritma Çekirdeği: Tüm planlama mantığının uygulandığı katman.
-│    ├── Scheduler.java   # Algoritma kontratını (Interface) tanımlar.
-│    └── ... (Tüm Planlama Algoritmaları)
-│
-└── utils/         # Yardımcı Servisler: Girdi/Çıktı ve genel yardımcı fonksiyonları içerir.
-├── CSVReader.java     # Harici süreç verilerini (CSV) sisteme yükler.
-└── FileWriterUtil.java  # Hesaplanan tüm sonuçları çıktı dosyasına yazar.
-└── Main.java      # Ana Çalıştırıcı: Program akışını yönetir ve simülasyonları başlatır.
 🛠️ Kurulum ve Çalıştırma Rehberi
 1. Giriş Verisi Hazırlığı
    Simülasyonun çalışması için, projenin kök dizininde (README'nin bulunduğu yer) aşağıdaki formatta bir processes.csv dosyası gereklidir:
