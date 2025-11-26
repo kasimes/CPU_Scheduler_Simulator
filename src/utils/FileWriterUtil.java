@@ -2,6 +2,8 @@ package utils;
 
 import model.Process;
 import model.Result;
+
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Comparator;
@@ -14,13 +16,14 @@ public class FileWriterUtil {
 
     private static  final double CONTEXT_SWITCH_TIME = 0.001;
 
-    public void writeResultsToFile(
+    public static void writeResultsToFile(
             List<Result> results,
             String algorithmName,
             int contextSwitchCount,
             int maxTime
+
     ){
-        String fileName = algorithmName + "_Sonuclar.txt";
+        String fileName = getNextFileName(algorithmName +"_",".txt");
             try(FileWriter writer = new FileWriter(fileName)) {
                 writer.write("==================================================\n");
                 writer.write("           ALGORITMA SONUCLARI: " + algorithmName + "\n");
@@ -67,7 +70,7 @@ public class FileWriterUtil {
             }
     }
 
-    private String generateGanttChart(List<Result> results) {
+    private static String generateGanttChart(List<Result> results) {
         StringBuilder sb = new StringBuilder();
         results.stream()
                 .map(Result::getPayload)
@@ -140,6 +143,31 @@ public class FileWriterUtil {
         if (utilization < 0) utilization = 0.0;
         if (utilization > 100.0) utilization = 100.0;
         return utilization;
+    }
+
+    private static  String getNextFileName(String prefix,String extension )
+    {
+        File  folder = new File(".");
+
+        File[]  files = folder.listFiles((dir, name) -> name.startsWith(prefix) && name.endsWith(extension));
+
+        int max = 0;
+        if (files != null)
+        {
+            for( File file : files)
+            {
+                String name = file.getName().replace(prefix, "").replace(extension, "");
+                try {
+                    int num = Integer.parseInt(name);
+                    if (num > max) max = num;
+                } catch (NumberFormatException e) {
+                    // ignore
+                }
+
+            }
+
+        }
+        return prefix + (max + 1) + extension;
     }
 
 }

@@ -12,7 +12,7 @@ public class CSVReader {
 
     private static final String CSV_SEPARATOR = ",";
 
-    public List<Process> readProcessesFromCSV(String filePath) {
+    public static List<Process> readProcessesFromCSV(String filePath) {
         List<Process> processes = new ArrayList<>();
 
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {

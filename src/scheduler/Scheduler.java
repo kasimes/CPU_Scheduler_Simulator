@@ -7,7 +7,12 @@ import java.util.List;
 
 public interface Scheduler {
 
-    List<Result> schedule(List<java.lang.Process> initialProcesses, int timeQuantum);
+    List<Result> schedule(List<Process> initialProcesses, int timeQuantum);
+
+    int getContextSwitchCount();
+
+    int getMaxCompletionTime(List<Result> results);
 
     String getAlgorithmName();
+
 }

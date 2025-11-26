@@ -12,8 +12,10 @@ import java.util.PriorityQueue;
 
 public class NonPreemptiveSJFImpl implements Scheduler {
 
+    int contextSwitchCount = 0;
+
     @Override
-    public List<Result> schedule(List<java.lang.Process> initialProcesses, int timeQuantum) {
+    public  List<Result> schedule(List<model.Process> initialProcesses, int timeQuantum) {
         List<Process> processes = new ArrayList<>(initialProcesses);
         List<Result> results = new ArrayList<>();
 
@@ -31,7 +33,7 @@ public class NonPreemptiveSJFImpl implements Scheduler {
         int processIndex = 0;
         int completedCount = 0;
         String lastProcessId = null;
-        int contextSwitchCount = 0;
+
 
         while (completedCount < processes.size() || !readyQueue.isEmpty()) {
 
@@ -82,7 +84,30 @@ public class NonPreemptiveSJFImpl implements Scheduler {
 
     // Projeye göre değiştirin: eğer Result.of(...) ya da farklı bir constructor varsa burayı ona göre değiştirin.
     private Result createResult(Process p) {
+        String info = String.format(
+                "Process %s -> Arrival: %d, Burst: %d, Completion: %d, Turnaround: %d, Waiting: %d",
+                p.getId(),
+                p.getArrivalTime(),
+                p.getBurstTime(),
+                p.getCompletionTime(),
+                p.getTurnaroundTime(),
+                p.getWaitingTime()
+                );
         return new Result(200, "OK", p);
+    }
+    @Override
+    public int getContextSwitchCount() {
+        return contextSwitchCount;
+    }
+
+    @Override
+    public int getMaxCompletionTime(List<Result> results) {
+        int max = 0;
+        for (Result r : results) {
+            Process p = (Process) r.getPayload();
+            if (p.getCompletionTime() > max) max = p.getCompletionTime();
+        }
+        return max;
     }
 
     @Override
