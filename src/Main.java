@@ -1,46 +1,61 @@
 import model.Result;
 import scheduler.Scheduler;
-import scheduler.impl.FCFSImpl;
-import scheduler.impl.NonPreemptiveSJFImpl;
+import scheduler.impl.*;
 import utils.CSVReader;
 import model.Process;
 import utils.FileWriterUtil;
 
-
+import java.util.ArrayList;
 import java.util.List;
 
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 public class Main {
     public static void main(String[] args) {
 
         String inputFile = "processes.csv";
-        String outputFile = "output.csv";
 
-        System.out.println("csv okunma burada "+ inputFile);
+        System.out.println("CSV okunuyor: " + inputFile);
 
-        //process listesini okuma
+        // Process listesini oku
         List<Process> processes = CSVReader.readProcessesFromCSV(inputFile);
+        System.out.println("Toplam process: " + processes.size());
 
-        System.out.println(" toplam processes " + processes.size());
+        // Algoritmaların listesi
+        List<Scheduler> algorithms = List.of(
+                new FCFSImpl(),
+                new NonPreemptivePriorityImpl(),
+                new PreemptivePriorityImpl(),
+                new NonPreemptiveSJFImpl(),
+                new PreemptiveSJFImpl(),
+                new RoundRobinImpl()
+        );
 
-        // Scheduler sec ve calıstır
-        Scheduler scheduler = new FCFSImpl();
-        List<Result> results = scheduler.schedule(processes,0);
+        int timeQuantum = 4; // Round Robin için kullan, diğer algoritmalar ihmal eder
 
-        System.out.println("\n===== FCFS SJF Scheduling Result =====");
-        for (Result r : results) {
-            System.out.println(r);
+        for (Scheduler scheduler : algorithms) {
+            // Process listesinin kopyasını al
+            List<Process> processCopy = deepCopyProcesses(processes);
+
+            // Algoritmayı çalıştır
+            List<Result> results = scheduler.schedule(processCopy, timeQuantum);
+
+            // Metrikleri al
+            int contextSwitchCount = scheduler.getContextSwitchCount();
+            int maxCompletionTime = scheduler.getMaxCompletionTime(results);
+            String algorithmName = scheduler.getAlgorithmName();
+
+            // Sonuçları dosyaya yaz
+            FileWriterUtil.writeResultsToFile(results, algorithmName, contextSwitchCount, maxCompletionTime);
         }
 
-        int contextSwitchCount = scheduler.getContextSwitchCount();
-        int maxCompletionTime = scheduler.getMaxCompletionTime(results);
-        String algorithmName = scheduler.getAlgorithmName();
+        System.out.println("Tüm algoritmalar çalıştırıldı ve sonuçlar kaydedildi.");
+    }
 
-        // sonuçları kayıt etme
-        FileWriterUtil.writeResultsToFile(results, algorithmName,contextSwitchCount,maxCompletionTime );
-
-        System.out.println("sonuç kayıt edildi"+outputFile);
-
+    // Process listesini kopyalamak için helper metot
+    private static List<Process> deepCopyProcesses(List<Process> original) {
+        List<Process> copy = new ArrayList<>();
+        for (Process p : original) {
+            copy.add(new Process(p.getId(), p.getArrivalTime(), p.getBurstTime(), p.getPriority(), p.getBurstTime()));
+        }
+        return copy;
     }
 }

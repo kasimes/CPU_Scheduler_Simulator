@@ -145,17 +145,15 @@ public class FileWriterUtil {
         return utilization;
     }
 
-    private static  String getNextFileName(String prefix,String extension )
-    {
-        File  folder = new File(".");
+    private static String getNextFileName(String prefix, String extension) {
+        File folder = new File("outputs");
+        if (!folder.exists()) folder.mkdirs();
 
-        File[]  files = folder.listFiles((dir, name) -> name.startsWith(prefix) && name.endsWith(extension));
+        File[] files = folder.listFiles((dir, name) -> name.startsWith(prefix) && name.endsWith(extension));
 
         int max = 0;
-        if (files != null)
-        {
-            for( File file : files)
-            {
+        if (files != null) {
+            for (File file : files) {
                 String name = file.getName().replace(prefix, "").replace(extension, "");
                 try {
                     int num = Integer.parseInt(name);
@@ -163,11 +161,11 @@ public class FileWriterUtil {
                 } catch (NumberFormatException e) {
                     // ignore
                 }
-
             }
-
         }
-        return prefix + (max + 1) + extension;
-    }
 
+        return new File(folder, prefix + (max + 1) + extension).getAbsolutePath();
+
+
+    }
 }
